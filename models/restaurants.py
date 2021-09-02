@@ -43,3 +43,19 @@ def load_csv_data(url: str):
             cur.close()
             conn.close()
 
+
+def insert(data):
+    conn = create_db_connection()
+
+    sql = """INSERT INTO restaurants 
+           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+    
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, data)
+        calculate_geom_column(data[0], conn) # data[0] is the id record
+        conn.commit()
+        return True
+    except Error as err:
+        print("Error at insert restaurant function. ", err)
+        return False
