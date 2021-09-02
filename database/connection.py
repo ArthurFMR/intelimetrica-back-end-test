@@ -6,7 +6,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL", None)
 LOCAL_DB_CONFIG = {"dbname": "restaurant", "user": "postgres", "password": "Admin2021"}
 
 
-def create_connection():
+def create_db_connection():
     try:
         conn = None
         if DATABASE_URL:

@@ -1,16 +1,16 @@
 # This file will run once using the command line
 
 from psycopg2 import Error
-from database.connection import create_connection
+from database.connection import create_db_connection
 
 import utils
 
 
 def create_tables():
-    conn = create_connection()
+    conn = create_db_connection()
 
     # Getting Query from sql file to create the tables
-    sql = utils.read_file("database/sql/restaurants.sql")
+    sql = utils.read_file("db/sql/restaurants.sql")
 
     try:
         cur = conn.cursor()

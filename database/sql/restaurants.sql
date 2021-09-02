@@ -1,4 +1,4 @@
-CREATE TABLE restaurants (
+CREATE TABLE iF NOT EXISTS restaurants (
 	id TEXT PRIMARY KEY,
 	rating INTEGER,
 	name TEXT,
@@ -12,4 +12,9 @@ CREATE TABLE restaurants (
 	lng DECIMAL
 	
 	CHECK (rating BETWEEN 0 AND 4)
-)
+);
+
+CREATE EXTENSION IF NOT EXISTS postgis SCHEMA public;
+
+ALTER TABLE restaurants
+ADD COLUMN IF NOT EXISTS geom geometry(Point, 4326)
