@@ -2,7 +2,7 @@ import os
 import psycopg2
 
 
-DATABASE_URL = os.environ["DATABASE_URL"]
+DATABASE_URL = os.environ.get("DATABASE_URL", None)
 LOCAL_DB_CONFIG = {"dbname": "restaurant", "user": "postgres", "password": "Admin2021"}
 
 
