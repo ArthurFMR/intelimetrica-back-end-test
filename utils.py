@@ -11,6 +11,10 @@ def read_file(path: str, encode="utf-8"):
         return file.read()
 
 
+def remove_file(path):
+    os.remove(path)
+
+
 def download_file(file_name: str, url: str):
     file_path = os.path.join(ROOT_DIR, file_name)
     try:

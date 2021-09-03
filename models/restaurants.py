@@ -40,6 +40,8 @@ def load_csv_data(url: str):
         return False
     finally:
         file.close()
+        utils.remove_file(file_path)
+        
         if conn:
             cur.close()
             conn.close()
