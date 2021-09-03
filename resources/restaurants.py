@@ -8,8 +8,9 @@ SUCCESSFUL_MSG = {'message': 'successful'}
 # Blueprint for separating routes from app.py
 restaurants_bp = Blueprint('routes-resources-restaurants', __name__)
 
+API_V = '/api/v1.0'
 
-@restaurants_bp.route('/restaurants/load-csv-data', methods=['POST'])
+@restaurants_bp.route(f'{API_V}/restaurants/load-csv-data', methods=['POST'])
 def load_data():
     url = request.args.get('url')
 
@@ -25,7 +26,7 @@ def load_data():
         return jsonify(response), 400
 
 
-@restaurants_bp.route('/restaurants', methods=['POST'])
+@restaurants_bp.route(f'{API_V}/restaurants', methods=['POST'])
 def add_restaurant():
     if check_json_type(request):
         
@@ -42,13 +43,13 @@ def add_restaurant():
     return jsonify(res), 400
 
 
-@restaurants_bp.route('/restaurants', methods=['GET'])
+@restaurants_bp.route(f'{API_V}/restaurants', methods=['GET'])
 def get_restaurants_list():
     data = restaurants.select_all()
     return jsonify(data), 200
 
 
-@restaurants_bp.route('/restaurants', methods=['PUT'])
+@restaurants_bp.route(f'{API_V}/restaurants', methods=['PUT'])
 def edit_restaurant():
     if check_json_type(request):
         
@@ -66,7 +67,7 @@ def edit_restaurant():
         return jsonify(response), 400
 
 
-@restaurants_bp.route('/restaurants', methods=['DELETE'])
+@restaurants_bp.route(f'{API_V}/restaurants', methods=['DELETE'])
 def remove_restaurant():
     id = request.args.get('id')
     if id:
@@ -78,7 +79,7 @@ def remove_restaurant():
     return jsonify(response), 400
 
 
-@restaurants_bp.route('/restaurants/statistics', methods=['GET'])
+@restaurants_bp.route(f'{API_V}/restaurants/statistics', methods=['GET'])
 def find_restaurants():
     lng = request.args.get('longitude')
     lat = request.args.get('latitude')

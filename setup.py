@@ -10,7 +10,7 @@ def create_tables():
     conn = create_db_connection()
 
     # Getting Query from sql file to create the tables
-    sql = utils.read_file("db/sql/restaurants.sql")
+    sql = utils.read_file("database/sql/restaurants.sql")
 
     try:
         cur = conn.cursor()
