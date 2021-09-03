@@ -1,7 +1,6 @@
 from psycopg2 import Error
 import psycopg2.extras
 import csv
-import json
 
 from database.connection import create_db_connection
 import utils
@@ -85,4 +84,62 @@ def select_all():
         if conn:
             cur.close()
             conn.close()
+
+
+def update(data: tuple):
+    conn = create_db_connection()
+
+    sql = """UPDATE restaurants
+                SET rating = %s, name = %s, site = %s, email = %s, 
+                    phone = %s, street = %s, city = %s, state = %s, 
+                    lat = %s, lng = %s
+                WHERE id = %s
+            """
     
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, data)
+        calculate_geom_column(data[0], conn) # data[0] is the id record
+        conn.commit()
+        return True
+    except Error as err:
+        print("Error at update restaurant function. ", err)
+        return False
+
+
+def delete(_id):
+    conn = create_db_connection()
+
+    sql = "DELETE FROM restaurants WHERE id = %s"
+    
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, (_id,))
+        conn.commit()
+        return True
+    except Error as err:
+        print("Error at delete restaurant function. ", err)
+        return False
+
+
+def find_restaurants_in_circle(lng, lat, radius):
+    conn = create_db_connection()
+    param = (lng, lat, radius)
+
+    sql = """
+    SELECT COUNT(id), AVG(rating), STDDEV(rating)
+        FROM restaurants
+    WHERE ST_DWithin(geom, ST_MakePoint(%s, %s)::geography, %s)
+    """
+
+    try:
+        cur = conn.cursor()
+        cur.execute(sql, param)
+        results = cur.fetchall()
+        return results
+    except Error as err:
+        print("Error at find_restaurants_in_circle restaurants function. ", str(err))
+    finally:
+        if conn:
+            cur.close()
+            conn.close()

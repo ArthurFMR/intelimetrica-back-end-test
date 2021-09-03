@@ -1,4 +1,4 @@
-from flask import json, request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint
 
 from models import restaurants
 
@@ -46,6 +46,50 @@ def add_restaurant():
 def get_restaurants_list():
     data = restaurants.select_all()
     return jsonify(data), 200
+
+
+@restaurants_bp.route('/restaurants', methods=['PUT'])
+def edit_restaurant():
+    if check_json_type(request):
+        
+        id = request.args.get('id')
+        if id:
+            data = group_data_from_request(request.json)
+            # Id is needed in the last position of the tuple
+            data.append(id)
+
+            if restaurants.update(tuple(data)):
+                return jsonify(SUCCESSFUL_MSG), 201
+            return jsonify(INTERNAL_ERROR), 500
+        
+        response = {'message': 'URL must contains id argument value'}
+        return jsonify(response), 400
+
+
+@restaurants_bp.route('/restaurants', methods=['DELETE'])
+def remove_restaurant():
+    id = request.args.get('id')
+    if id:
+        if restaurants.delete(id):
+            return jsonify(SUCCESSFUL_MSG), 200
+        return jsonify(INTERNAL_ERROR), 500
+    
+    response = {'message': 'URL must contains id argument value'}
+    return jsonify(response), 400
+
+
+@restaurants_bp.route('/restaurants/statistics', methods=['GET'])
+def find_restaurants():
+    lng = request.args.get('longitude')
+    lat = request.args.get('latitude')
+    radius = request.args.get('radius')
+
+    if lng and lat and radius:
+        data = restaurants.find_restaurants_in_circle(lng, lat, radius)[0]
+        return jsonify({'count': data[0], 'avg': float(data[1]), 'std': float(data[2])}), 200
+
+    response = {'message': 'URL must contains all arguments value required'}
+    return jsonify(response), 400
 
 
 def check_json_type(req):
