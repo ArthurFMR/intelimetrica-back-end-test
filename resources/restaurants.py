@@ -28,14 +28,24 @@ def load_data():
 @restaurants_bp.route('/restaurants', methods=['POST'])
 def add_restaurant():
     if check_json_type(request):
+        
+        id = request.json['id']
         data = group_data_from_request(request.json)
-
-        if restaurants.insert(data):
+        # Id is needed in the first position of the tuple
+        data.insert(0, id)
+      
+        if restaurants.insert(tuple(data)):
             return jsonify(SUCCESSFUL_MSG), 201
         return jsonify(INTERNAL_ERROR), 500
     
     res = {'message': 'The type of the content must be json'}
     return jsonify(res), 400
+
+
+@restaurants_bp.route('/restaurants', methods=['GET'])
+def get_restaurants_list():
+    data = restaurants.select_all()
+    return jsonify(data), 200
 
 
 def check_json_type(req):
@@ -52,19 +62,14 @@ def group_data_from_request(json):
     tuple
     """
 
-    id = json['id']
-    rating = json['rating']
-    name = json['name']
-    site = json['site']
-    email = json['email']
-    phone = json['phone']
-    street = json['street']
-    city = json['city']
-    state = json['state']
-    lat = json['lat']
-    lng = json['lng']
+    # Asigning data to variables
+    rating, name = json['rating'], json['name'] 
+    site, email, phone = json['site'], json['email'], json['phone']
+    street, city, state = json['street'], json['city'], json['state']
+    lat, lng = json['lat'], json['lng']
+    
 
-    data = (id, rating, name, site, email, phone, street, city,
-            state, lat, lng)
+    data = [rating, name, site, email, phone, street, city,
+            state, lat, lng]
     
     return data

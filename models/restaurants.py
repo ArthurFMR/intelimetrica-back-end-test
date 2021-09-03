@@ -1,5 +1,7 @@
 from psycopg2 import Error
+import psycopg2.extras
 import csv
+import json
 
 from database.connection import create_db_connection
 import utils
@@ -44,7 +46,7 @@ def load_csv_data(url: str):
             conn.close()
 
 
-def insert(data):
+def insert(data: tuple):
     conn = create_db_connection()
 
     sql = """INSERT INTO restaurants 
@@ -59,3 +61,28 @@ def insert(data):
     except Error as err:
         print("Error at insert restaurant function. ", err)
         return False
+    finally:
+        if conn:
+            cur.close()
+            conn.close()
+
+
+def select_all():
+    conn = create_db_connection()
+
+    sql = """SELECT id, rating, name, site, email, phone, street, city
+                    state, lat, lng 
+             FROM restaurants"""
+
+    try:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(sql)
+        results = cur.fetchall()
+        return results
+    except Error as err:
+        print("Error at select_all restaurants function. ", str(err))
+    finally:
+        if conn:
+            cur.close()
+            conn.close()
+    
